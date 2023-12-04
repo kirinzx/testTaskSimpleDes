@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres16
+    environment:
+      POSTGRES_DB: shop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
+    networks:
+      - djangonetwork
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend-container
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+    command:
+      - sh
+      - -c
+      - |
+        /usr/local/bin/wait-for-it.sh db:5432 -t 20 --
+        python manage.py makemigrations --noinput
+        python manage.py migrate --noinput
+        gunicorn config.wsgi -c gunicorn_config.py --reload --access-logfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - djangonetwork
+
+
+networks:
+  djangonetwork:
+    driver: bridge
