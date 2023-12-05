@@ -1,0 +1,25 @@
+{% load static %}
+{% load rest_framework %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Покупка</title>
+    <script src="https://js.stripe.com/v3/" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+    <script src="{% static 'js/api_calls.js' %}" defer></script>
+</head>
+<body>
+    <div>
+        <p>Choosen currency: <span id="currency">{{currency}}</span></p>
+        <h2>Item info</h2>
+        <p>Id: <span id="item_id">{{item.pk}}</span></p>
+        <p>Name: {{item.name}}</p>
+        <p>Description: {{item.description}}</p>
+        <p>Currency and Price: {{item.price_currency | safe}}</p>
+        <button type="button" onclick="buy_item()">Buy</button>
+    </div>
+</body>
+</html>
