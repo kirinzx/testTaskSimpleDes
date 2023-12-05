@@ -14,12 +14,12 @@ class BuyItemApiView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, pk=None, currency=None):
-        item: Item = get_object_or_404(Item, pk=pk)
-
         currency = currency.upper()
 
         if currency not in settings.CURRENCIES:
             return Response(data={"detail": "Неизвестная валюта"}, status=status.HTTP_400_BAD_REQUEST)
+
+        item: Item = get_object_or_404(Item, pk=pk)
 
         item_price = float(item.price_currency.get(currency))
         try:
@@ -39,7 +39,7 @@ class BuyItemApiView(APIView):
                 success_url=f'http://127.0.0.1:8000/buy/{pk}/currency/{currency}',
             )
         except InvalidRequestError:
-            return Response(data={"detail": "Ошибка в запросе"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"detail": "Ошибка в запросе к Stripe"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(data={"session_id": session.id})
 
@@ -60,10 +60,8 @@ class MakeOrderApiView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, pk=None, currency=None):
-
-        if currency is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
         currency = currency.upper()
+
         if currency not in settings.CURRENCIES:
             return Response(data={"detail": "Неизвестная валюта"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -71,13 +69,13 @@ class MakeOrderApiView(APIView):
             pk=pk)
 
         if not order.exists():
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(data={"detail": "Заказ не найден"}, status=status.HTTP_404_NOT_FOUND)
 
         orderitems = OrderItem.objects.filter(
             order=pk).prefetch_related('item')
 
         if not orderitems.exists():
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(data={"detail": "Заказ не содержит товаров"}, status=status.HTTP_400_BAD_REQUEST)
 
         order = order.select_related(
             'tax', 'discount').get(pk=pk)
@@ -114,7 +112,7 @@ class MakeOrderApiView(APIView):
             )
 
         except InvalidRequestError:
-            return Response(data={"detail": "Ошибка в запросе"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"detail": "Ошибка в запросе к Stripe"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(data={"session_id": session.id})
 
@@ -124,8 +122,6 @@ class RetrieveOrderHtmlApiView(APIView):
     renderer_classes = (TemplateHTMLRenderer, JSONRenderer)
 
     def get(self, request, pk=None, currency=None):
-        if currency is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         currency = currency.upper()
 
@@ -136,13 +132,13 @@ class RetrieveOrderHtmlApiView(APIView):
             pk=pk)
 
         if not order.exists():
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(data={"detail": "Заказ не найден"}, status=status.HTTP_404_NOT_FOUND)
 
         orderitems = OrderItem.objects.filter(
             order=pk).prefetch_related('item')
 
         if not orderitems.exists():
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(data={"detail": "Заказ не нсодержит товаров"}, status=status.HTTP_400_BAD_REQUEST)
 
         order = order.select_related(
             'tax', 'discount').get(pk=pk)

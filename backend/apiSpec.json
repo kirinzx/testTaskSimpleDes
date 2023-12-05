@@ -1,5 +1,5 @@
 {
-    "openapi" : "3.0",
+    "openapi" : "3.0.2",
     "info": {
         "title": "buying_service",
         "version": "1.0"
@@ -8,5 +8,259 @@
         {
             "url": "http://127.0.0.1:8000"
         }
-    ]
+    ],
+
+    "paths" : {
+        "/buy/{id}/currency/{currency}":{
+            "get":{
+                "summary": "Получение session_id оплаты товара",
+                "operationId": "buy_item",
+                "tags": [
+                    "Item"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#components/parameters/Id"
+                    },
+                    {
+                        "$ref": "#components/parameters/Currency"
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "Успешное получение сессии",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/SessionId"
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "Ошибка в запросе",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Товар не найден",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "default":{
+                        "description": "Всё остальное"
+                    }
+                }
+            }
+        },
+        "/item/{id}/currency/{currency}":{
+            "get":{
+                "summary": "Получение html страницы с товаром и кнопкой для оплаты",
+                "operationId": "get_item_html",
+                "tags": [
+                    "Item"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#components/parameters/Id"
+                    },
+                    {
+                        "$ref": "#components/parameters/Currency"
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "Успешное получение html",
+                        "content": {
+                            "text/html":{
+                                "schema":{
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "Ошибка в запросе",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Товар не найден",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "default":{
+                        "description": "Всё остальное"
+                    }
+                }
+            }
+        },
+        "/makeorder/{id}/currency/{currency}":{
+            "get":{
+                "summary": "Получение session_id для оплаты заказа",
+                "operationId": "make_order",
+                "tags": [
+                    "Order"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#components/parameters/Id"
+                    },
+                    {
+                        "$ref": "#components/parameters/Currency"
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "Успешное получение сессии",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/SessionId"
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "Ошибка в запросе",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Заказ не найден",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "default":{
+                        "description": "Всё остальное"
+                    }
+                }
+            }
+        },
+        "/order/{id}/currency/{currency}":{
+            "get":{
+                "summary": "Получение html страницы заказа и с кнопкой оплаты",
+                "operationId": "get_order_html",
+                "tags": [
+                    "Order"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#components/parameters/Id"
+                    },
+                    {
+                        "$ref": "#components/parameters/Currency"
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "Успешное получение html страницы",
+                        "content": {
+                            "text/html":{
+                                "schema":{
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "Ошибка в запросе",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Заказ не найден",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "default":{
+                        "description": "Всё остальное"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "SessionId":{
+                "type": "object",
+                "properties": {
+                    "session_id" :{
+                        "type": "string",
+                        "example": "cs_test_AAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                    }
+                }
+            },
+            "Error":{
+                "type": "object",
+                "properties": {
+                    "detail":{
+                        "type": "string",
+                        "example":"Неизвестная валюта"
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "Id":{
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema":{
+                    "type": "integer",
+                    "example": 1
+                }
+            },
+            "Currency":{
+                "name": "currency",
+                "in": "path",
+                "required": true,
+                "description": "Абривиатура валюты. Если вы ничего не изменяли, то сейчас поддерживаются две валюты: USD и RUB(можно маленькими буквами)",
+                "schema": {
+                    "type": "string",
+                    "example": "USD"
+                }
+            }
+        }
+    }
 }
