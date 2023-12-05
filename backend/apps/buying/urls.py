@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import BuyItemApiView, MakeOrderApiView, RetrieveBuyingHtmlApiView, RetrieveOrderHtmlApiView
+from django.views.generic import TemplateView
+from .views import BuyItemApiView, MakeOrderApiView, RetrieveBuyingHtmlApiView, RetrieveOrderHtmlApiView, openapi_spec
 
 urlpatterns = [
     path('buy/<int:pk>/currency/<str:currency>', BuyItemApiView.as_view()),
@@ -8,5 +9,9 @@ urlpatterns = [
     path('makeorder/<int:pk>/currency/<str:currency>',
          MakeOrderApiView.as_view()),
     path('order/<int:pk>/currency/<str:currency>',
-         RetrieveOrderHtmlApiView.as_view())
+         RetrieveOrderHtmlApiView.as_view()),
+    path('openapi_spec', openapi_spec, name='openapi_spec'),
+    path('docs/', TemplateView.as_view(
+        template_name='swagger-ui.html'
+    ), name='swagger-ui'),
 ]

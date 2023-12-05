@@ -8,6 +8,8 @@ import stripe
 from stripe.error import InvalidRequestError
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from django.conf import settings
+import json
+from django.http import JsonResponse
 
 
 class BuyItemApiView(APIView):
@@ -144,3 +146,10 @@ class RetrieveOrderHtmlApiView(APIView):
             'tax', 'discount').get(pk=pk)
 
         return Response(data={'currency': currency, 'orderitems': orderitems, 'order': order}, template_name="order.html", content_type='text/html')
+
+
+def openapi_spec(request):
+    with open('apiSpec.json')as f:
+        openapi = json.load(f)
+
+    return JsonResponse(openapi, safe=False)

@@ -38,8 +38,6 @@ class Item(models.Model):
                     f'Значения ключа "{currency}" в поле "price_currency" должно быть целым или нецелым числом'
                 )
 
-            # if price >=
-
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)

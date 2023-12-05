@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'requests',
     'stripe',
     'apps.buying'
 ]
@@ -139,7 +138,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'errors',
 }
-stripe.api_key = config('STRIPE_API_KEY')
 
+stripe.api_key = config('STRIPE_API_KEY')
 
 CURRENCIES = ["USD", "RUB"]
